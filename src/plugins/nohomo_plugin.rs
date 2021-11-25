@@ -3,15 +3,15 @@ use irc::client::prelude::*;
 static TRIGGER: &str = "<3";
 static RESPONSE: &str = "#nohomo";
 
-pub struct NoHomoPlugin;
+pub struct NohomoPlugin;
 
-impl NoHomoPlugin {
-    pub fn new() -> NoHomoPlugin {
-        NoHomoPlugin
+impl NohomoPlugin {
+    pub fn new() -> NohomoPlugin {
+        NohomoPlugin
     }
 }
 
-impl super::Plugin for NoHomoPlugin {
+impl super::Plugin for NohomoPlugin {
     fn matches(&self, msg: &str) -> bool {
         msg.contains(TRIGGER)
     }

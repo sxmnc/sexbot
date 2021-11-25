@@ -2,11 +2,11 @@ use irc::client::prelude::*;
 
 pub(crate) use dorito_plugin::DoritoPlugin;
 pub(crate) use lucario_plugin::LucarioPlugin;
-pub(crate) use no_homo_plugin::NoHomoPlugin;
+pub(crate) use nohomo_plugin::NohomoPlugin;
 
 mod dorito_plugin;
 mod lucario_plugin;
-mod no_homo_plugin;
+mod nohomo_plugin;
 
 pub(crate) trait Plugin {
     fn matches(&self, msg: &str) -> bool;

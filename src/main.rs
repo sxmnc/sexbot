@@ -2,6 +2,7 @@
 use plugins::*;
 
 mod app;
+mod macros;
 mod plugins;
 
 static CONFIG_PATH: &str = "config.toml";
@@ -11,7 +12,7 @@ async fn main() -> irc::error::Result<()> {
     let plugins = app::register! {
         DoritoPlugin,
         LucarioPlugin,
-        NoHomoPlugin,
+        NohomoPlugin,
     };
 
     let client = app::load_client(CONFIG_PATH).await?;
