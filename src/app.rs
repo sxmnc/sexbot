@@ -3,24 +3,7 @@ use irc::client::prelude::*;
 
 use crate::plugins::Plugin;
 
-macro_rules! register {
-	() => {
-        {
-            use crate::plugins::Plugin;
-		    Vec::<Box<dyn Plugin>>::new()
-        }
-	};
-    ($($plugin:ident),+$(,)?) => {
-        {
-            use crate::plugins::Plugin;
-            let mut plugins = Vec::<Box<dyn Plugin>>::new();
-            $(plugins.push(Box::new($plugin::new()));)*
-            plugins
-        }
-    };
-}
-
-pub(crate) use register;
+pub(crate) use crate::macros::register;
 
 pub(crate) async fn load_client(config_path: &str) -> irc::error::Result<Client> {
     let config = Config::load(config_path)?;
