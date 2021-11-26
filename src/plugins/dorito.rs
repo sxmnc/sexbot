@@ -7,15 +7,10 @@ static FALSE_RESPONSE: &str = "False story";
 static TRUE_RESPONSE: &str = "True story";
 static TROLL_RESPONSE: &str = "TROLOLO";
 
-pub struct DoritoPlugin;
+#[derive(Default)]
+pub struct Dorito;
 
-impl DoritoPlugin {
-    pub fn new() -> DoritoPlugin {
-        DoritoPlugin
-    }
-}
-
-impl super::Plugin for DoritoPlugin {
+impl super::Plugin for Dorito {
     fn matches(&self, msg: &str) -> bool {
         msg == TRIGGER
     }
