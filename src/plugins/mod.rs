@@ -1,8 +1,8 @@
-pub(crate) use beke::Beke;
-pub(crate) use dorito::Dorito;
-pub(crate) use lucario::Lucario;
-pub(crate) use nohomo::Nohomo;
-pub(crate) use plugin::Plugin;
+pub(crate) use self::beke::BekePlugin;
+pub(crate) use self::dorito::DoritoPlugin;
+pub(crate) use self::lucario::LucarioPlugin;
+pub(crate) use self::nohomo::NohomoPlugin;
+pub(crate) use self::plugin::Plugin;
 
 mod beke;
 mod dorito;

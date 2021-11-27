@@ -1,24 +1,25 @@
 use futures::prelude::*;
 use irc::client::prelude::*;
 
-use plugins::*;
+use crate::macros::*;
+use crate::plugins::*;
 
 static CONFIG_PATH: &str = "config.toml";
 
+mod macros;
 mod plugins;
 
 #[tokio::main]
 async fn main() -> irc::error::Result<()> {
-    let mut ext = Vec::new();
-    Beke::register(&mut ext);
-    Dorito::register(&mut ext);
-    Lucario::register(&mut ext);
-    Nohomo::register(&mut ext);
-
     let config = Config::load(CONFIG_PATH)?;
-    for plugin in &mut ext {
-        plugin.configure(&config);
-    }
+
+    let plugins = register! {
+        config,
+        BekePlugin,
+        DoritoPlugin,
+        LucarioPlugin,
+        NohomoPlugin,
+    };
 
     let mut client = Client::from_config(config).await?;
     client.identify()?;
@@ -29,7 +30,7 @@ async fn main() -> irc::error::Result<()> {
 
         match message.command {
             Command::PRIVMSG(ref target, ref msg) => {
-                for plugin in &ext {
+                for plugin in &plugins {
                     if plugin.matches(msg) {
                         plugin.call(&client, target, msg)?;
                         break;

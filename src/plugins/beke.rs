@@ -1,28 +1,33 @@
 use irc::client::prelude::*;
 
-static TRIGGER: &str = "$beke";
-static BEKE_NICKNAME: &str = "KwameBeke";
-static RESPONSE: &str = "Hé hé hé...";
-
-#[derive(Default)]
-pub struct Beke {
+pub struct BekePlugin {
     nickname: String,
+    trigger: String,
+    temp_nickname: String,
+    message: String,
 }
 
-impl super::Plugin for Beke {
-    fn configure(&mut self, config: &Config) {
-        self.nickname = config.nickname.as_ref().unwrap().to_owned();
+impl BekePlugin {
+    pub fn new(config: &Config) -> BekePlugin {
+        BekePlugin {
+            nickname: config.nickname.as_ref().unwrap().to_owned(),
+            trigger: config.get_option("beke_trigger").unwrap().to_owned(),
+            temp_nickname: config.get_option("beke_nickname").unwrap().to_owned(),
+            message: config.get_option("beke_message").unwrap().to_owned(),
+        }
     }
+}
 
+impl super::Plugin for BekePlugin {
     fn matches(&self, msg: &str) -> bool {
-        msg == TRIGGER
+        msg == self.trigger
     }
 
     fn call(&self, client: &Client, target: &str, _msg: &str) -> irc::error::Result<()> {
         let sender = client.sender();
-        sender.send(Command::NICK(BEKE_NICKNAME.to_owned()))?;
-        sender.send_privmsg(target, RESPONSE)?;
-        sender.send(Command::NICK(self.nickname.to_owned()))?;
+        sender.send(Command::NICK(self.temp_nickname.clone()))?;
+        sender.send_privmsg(target, &self.message)?;
+        sender.send(Command::NICK(self.nickname.clone()))?;
         Ok(())
     }
 }
