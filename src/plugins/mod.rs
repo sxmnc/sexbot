@@ -3,7 +3,7 @@ pub(crate) use self::dorito::DoritoPlugin;
 pub(crate) use self::help::HelpPlugin;
 pub(crate) use self::lucario::LucarioPlugin;
 pub(crate) use self::nohomo::NohomoPlugin;
-pub(crate) use self::plugin::Plugin;
+pub(crate) use self::plugin::{Plugin, Plugins};
 
 mod beke;
 mod dorito;

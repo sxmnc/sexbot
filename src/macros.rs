@@ -6,11 +6,11 @@ macro_rules! get_required {
 }
 
 #[macro_export]
-macro_rules! register {
+macro_rules! build_plugins {
     ($config:expr, $($plugin:ident),+ $(,)?) => {
 		{
-			use crate::plugins::Plugin;
-			let mut plugins = Vec::<Box<dyn Plugin>>::new();
+			use crate::plugins::Plugins;
+			let mut plugins: Plugins = Vec::new();
 			$(
 				plugins.push(Box::new($plugin::new($config)));
 			)*

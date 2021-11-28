@@ -9,26 +9,30 @@ mod macros;
 mod plugins;
 mod prelude;
 
-#[tokio::main]
-async fn main() -> irc::error::Result<()> {
-    let config = Config::load(CONFIG_PATH)?;
-
-    let plugins = register! {
-        &config,
+fn load_plugins(config: &Config) -> Plugins {
+    build_plugins! {
+        config,
         BekePlugin,
         DoritoPlugin,
         HelpPlugin,
         LucarioPlugin,
         NohomoPlugin,
-    };
+    }
+}
 
-    let mut client = Client::from_config(config).await?;
+async fn main_setup() -> irc::error::Result<(Client, Plugins)> {
+    let config = Config::load(CONFIG_PATH)?;
+    let plugins = load_plugins(&config);
+    let client = Client::from_config(config).await?;
     client.identify()?;
 
+    Ok((client, plugins))
+}
+
+async fn main_loop(mut client: Client, plugins: Plugins) -> irc::error::Result<()> {
     let mut stream = client.stream()?;
     loop {
         let message = stream.select_next_some().await?;
-
         match message.command {
             Command::PRIVMSG(ref target, ref msg) => {
                 for plugin in &plugins {
@@ -41,4 +45,10 @@ async fn main() -> irc::error::Result<()> {
             _ => (),
         }
     }
+}
+
+#[tokio::main]
+async fn main() -> irc::error::Result<()> {
+    let (client, plugins) = main_setup().await?;
+    main_loop(client, plugins).await
 }
