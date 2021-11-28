@@ -1,6 +1,8 @@
 use irc::client::prelude::*;
 use rand::Rng;
 
+use crate::prelude::*;
+
 pub struct DoritoPlugin {
     trigger: String,
     message: String,
@@ -12,16 +14,16 @@ pub struct DoritoPlugin {
 impl DoritoPlugin {
     pub fn new(config: &Config) -> DoritoPlugin {
         DoritoPlugin {
-            trigger: config.get_option("dorito_trigger").unwrap().to_owned(),
-            message: config.get_option("dorito_message").unwrap().to_owned(),
-            false_message: config.get_option("dorito_false").unwrap().to_owned(),
-            true_message: config.get_option("dorito_true").unwrap().to_owned(),
-            troll_message: config.get_option("dorito_troll").unwrap().to_owned(),
+            trigger: get_required!(config, "dorito_trigger"),
+            message: get_required!(config, "dorito_message"),
+            false_message: get_required!(config, "dorito_false_message"),
+            true_message: get_required!(config, "dorito_true_message"),
+            troll_message: get_required!(config, "dorito_troll_message"),
         }
     }
 }
 
-impl super::Plugin for DoritoPlugin {
+impl Plugin for DoritoPlugin {
     fn matches(&self, msg: &str) -> bool {
         msg == self.trigger
     }

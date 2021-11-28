@@ -1,5 +1,7 @@
 use irc::client::prelude::*;
 
+use crate::prelude::*;
+
 pub struct BekePlugin {
     nickname: String,
     trigger: String,
@@ -10,15 +12,15 @@ pub struct BekePlugin {
 impl BekePlugin {
     pub fn new(config: &Config) -> BekePlugin {
         BekePlugin {
-            nickname: config.nickname.as_ref().unwrap().to_owned(),
-            trigger: config.get_option("beke_trigger").unwrap().to_owned(),
-            temp_nickname: config.get_option("beke_nickname").unwrap().to_owned(),
-            message: config.get_option("beke_message").unwrap().to_owned(),
+            nickname: config.nickname().unwrap().to_owned(),
+            trigger: get_required!(config, "beke_trigger"),
+            temp_nickname: get_required!(config, "beke_temp_nickname"),
+            message: get_required!(config, "beke_message"),
         }
     }
 }
 
-impl super::Plugin for BekePlugin {
+impl Plugin for BekePlugin {
     fn matches(&self, msg: &str) -> bool {
         msg == self.trigger
     }

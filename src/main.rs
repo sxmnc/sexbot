@@ -1,20 +1,20 @@
 use futures::prelude::*;
 use irc::client::prelude::*;
 
-use crate::macros::*;
-use crate::plugins::*;
+use crate::prelude::*;
 
 static CONFIG_PATH: &str = "config.toml";
 
 mod macros;
 mod plugins;
+mod prelude;
 
 #[tokio::main]
 async fn main() -> irc::error::Result<()> {
     let config = Config::load(CONFIG_PATH)?;
 
     let plugins = register! {
-        config,
+        &config,
         BekePlugin,
         DoritoPlugin,
         LucarioPlugin,

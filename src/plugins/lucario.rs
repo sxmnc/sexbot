@@ -1,5 +1,7 @@
 use irc::client::prelude::*;
 
+use crate::prelude::*;
+
 pub struct LucarioPlugin {
     trigger: String,
     message: String,
@@ -8,13 +10,13 @@ pub struct LucarioPlugin {
 impl LucarioPlugin {
     pub fn new(config: &Config) -> LucarioPlugin {
         LucarioPlugin {
-            trigger: config.get_option("lucario_trigger").unwrap().to_owned(),
-            message: config.get_option("lucario_message").unwrap().to_owned(),
+            trigger: get_required!(config, "lucario_trigger"),
+            message: get_required!(config, "lucario_message"),
         }
     }
 }
 
-impl super::Plugin for LucarioPlugin {
+impl Plugin for LucarioPlugin {
     fn matches(&self, msg: &str) -> bool {
         msg == self.trigger
     }

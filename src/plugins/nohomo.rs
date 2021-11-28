@@ -1,5 +1,7 @@
 use irc::client::prelude::*;
 
+use crate::prelude::*;
+
 pub struct NohomoPlugin {
     trigger: String,
     message: String,
@@ -8,13 +10,13 @@ pub struct NohomoPlugin {
 impl NohomoPlugin {
     pub fn new(config: &Config) -> NohomoPlugin {
         NohomoPlugin {
-            trigger: config.get_option("nohomo_trigger").unwrap().to_owned(),
-            message: config.get_option("nohomo_message").unwrap().to_owned(),
+            trigger: get_required!(config, "nohomo_trigger"),
+            message: get_required!(config, "nohomo_message"),
         }
     }
 }
 
-impl super::Plugin for NohomoPlugin {
+impl Plugin for NohomoPlugin {
     fn matches(&self, msg: &str) -> bool {
         msg.contains(&self.trigger)
     }
