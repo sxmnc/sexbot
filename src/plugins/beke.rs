@@ -27,9 +27,9 @@ impl Plugin for BekePlugin {
 
     fn call(&self, client: &Client, target: &str, _msg: &str) -> irc::error::Result<()> {
         let sender = client.sender();
-        sender.send(Command::NICK(self.temp_nickname.clone()))?;
+        sender.send(Command::NICK(self.temp_nickname.to_owned()))?;
         sender.send_privmsg(target, &self.message)?;
-        sender.send(Command::NICK(self.nickname.clone()))?;
+        sender.send(Command::NICK(self.nickname.to_owned()))?;
         Ok(())
     }
 }
