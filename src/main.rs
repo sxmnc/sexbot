@@ -17,6 +17,7 @@ async fn main() -> irc::error::Result<()> {
         &config,
         BekePlugin,
         DoritoPlugin,
+        HelpPlugin,
         LucarioPlugin,
         NohomoPlugin,
     };
