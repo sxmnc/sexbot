@@ -17,6 +17,7 @@ fn load_plugins(config: &Config) -> Plugins {
         HelpPlugin,
         LucarioPlugin,
         NohomoPlugin,
+        ReplyPlugin,
     }
 }
 
@@ -31,6 +32,17 @@ async fn main_setup() -> irc::error::Result<(Client, Plugins)> {
     Ok((client, plugins))
 }
 
+fn extract_prefix(message: &Message) -> String {
+    message
+        .prefix
+        .to_owned()
+        .map(|prefix| match prefix {
+            Prefix::Nickname(prefix, _, _) => prefix,
+            Prefix::ServerName(prefix) => prefix,
+        })
+        .unwrap_or_default()
+}
+
 async fn main_loop(mut client: Client, plugins: Plugins) -> irc::error::Result<()> {
     let mut stream = client.stream()?;
     loop {
@@ -40,7 +52,8 @@ async fn main_loop(mut client: Client, plugins: Plugins) -> irc::error::Result<(
                 let msg = msg.trim();
                 for plugin in &plugins {
                     if plugin.matches(msg) {
-                        plugin.call(&client, target, msg)?;
+                        let prefix = extract_prefix(&message);
+                        plugin.call(&client, target, msg, prefix)?;
                         break;
                     }
                 }

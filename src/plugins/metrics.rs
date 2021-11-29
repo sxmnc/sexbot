@@ -14,17 +14,23 @@ impl MetricsPlugin {
         MetricsPlugin {
             start_time: Utc::now(),
             plugin_count: plugins.len() + 1,
-            trigger: get_required!(config, "metrics_trigger"),
+            trigger: get_required!(config, "metrics_trigger").to_lowercase(),
         }
     }
 }
 
 impl Plugin for MetricsPlugin {
     fn matches(&self, msg: &str) -> bool {
-        msg == self.trigger
+        msg.to_lowercase() == self.trigger
     }
 
-    fn call(&self, client: &Client, target: &str, _msg: &str) -> irc::error::Result<()> {
+    fn call(
+        &self,
+        client: &Client,
+        target: &str,
+        _msg: &str,
+        _prefix: String,
+    ) -> irc::error::Result<()> {
         let sender = client.sender();
 
         let uptime = Utc::now() - self.start_time;

@@ -22,7 +22,7 @@ fn collect_topics(options: &HashMap<String, String>) -> HashMap<String, String> 
 impl HelpPlugin {
     pub fn new(config: &Config) -> HelpPlugin {
         HelpPlugin {
-            trigger: get_required!(config, "help_trigger"),
+            trigger: get_required!(config, "help_trigger").to_lowercase(),
             topics: collect_topics(&config.options),
         }
     }
@@ -32,19 +32,25 @@ impl Plugin for HelpPlugin {
     fn matches(&self, msg: &str) -> bool {
         msg.split_whitespace()
             .next()
-            .map(|handle| handle == self.trigger)
+            .map(|handle| handle.to_lowercase() == self.trigger)
             .unwrap_or_default()
     }
 
-    fn call(&self, client: &Client, target: &str, msg: &str) -> irc::error::Result<()> {
+    fn call(
+        &self,
+        client: &Client,
+        target: &str,
+        msg: &str,
+        _prefix: String,
+    ) -> irc::error::Result<()> {
         let sender = client.sender();
         let mut parts = msg.split_whitespace();
         parts.next();
 
-        let topic = parts.next().unwrap_or("help");
+        let topic = parts.next().unwrap_or("help").to_lowercase();
 
-        if self.topics.contains_key(topic) {
-            sender.send_privmsg(target, &self.topics[topic])?;
+        if self.topics.contains_key(&topic) {
+            sender.send_privmsg(target, &self.topics[&topic])?;
         } else {
             sender.send_privmsg(target, format!("No help available for: {}", topic))?;
         }

@@ -21,7 +21,13 @@ impl Plugin for NohomoPlugin {
         msg.contains(&self.trigger)
     }
 
-    fn call(&self, client: &Client, target: &str, _msg: &str) -> irc::error::Result<()> {
+    fn call(
+        &self,
+        client: &Client,
+        target: &str,
+        _msg: &str,
+        _prefix: String,
+    ) -> irc::error::Result<()> {
         let sender = client.sender();
         sender.send_privmsg(target, &self.message)?;
         Ok(())

@@ -10,7 +10,7 @@ pub struct LucarioPlugin {
 impl LucarioPlugin {
     pub fn new(config: &Config) -> LucarioPlugin {
         LucarioPlugin {
-            trigger: get_required!(config, "lucario_trigger"),
+            trigger: get_required!(config, "lucario_trigger").to_lowercase(),
             message: get_required!(config, "lucario_message"),
         }
     }
@@ -18,10 +18,16 @@ impl LucarioPlugin {
 
 impl Plugin for LucarioPlugin {
     fn matches(&self, msg: &str) -> bool {
-        msg == self.trigger
+        msg.to_lowercase() == self.trigger
     }
 
-    fn call(&self, client: &Client, target: &str, _msg: &str) -> irc::error::Result<()> {
+    fn call(
+        &self,
+        client: &Client,
+        target: &str,
+        _msg: &str,
+        _prefix: String,
+    ) -> irc::error::Result<()> {
         let sender = client.sender();
         sender.send_privmsg(target, &self.message)?;
         Ok(())
