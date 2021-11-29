@@ -5,6 +5,7 @@ pub(crate) use self::lucario::LucarioPlugin;
 pub(crate) use self::metrics::MetricsPlugin;
 pub(crate) use self::nohomo::NohomoPlugin;
 pub(crate) use self::plugin::{Plugin, Plugins};
+pub(crate) use self::reply::ReplyPlugin;
 
 mod beke;
 mod dorito;
@@ -13,3 +14,4 @@ mod lucario;
 mod metrics;
 mod nohomo;
 mod plugin;
+mod reply;
