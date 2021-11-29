@@ -1,0 +1,66 @@
+nickname = "test"
+server = "irc.test.net"
+channels = ["#test"]
+use_mock_connection = true
+
+[options]
+beke_trigger = "$beke"
+beke_temp_nickname = "KwameBeke"
+beke_message = "Hé hé hé..."
+
+dorito_trigger = ":^)"
+dorito_message = "THE TROLL STRUCK AGAIN"
+dorito_false_message = "False story"
+dorito_true_message = "True story"
+dorito_troll_message = "TROLOLO"
+
+hash_trigger = "$hash"
+hash_help = "$hash algorithm input -- Hashes text with the given algorithm."
+
+help_trigger = "$help"
+help_help = "$help topic -- Prints out help about a bot plugin or command."
+
+lmgtfy_trigger_1 = "$lmgtfy"
+lmgtfy_trigger_2 = "$snob"
+lmgtfy_trigger_3 = "$rtfm"
+
+lucario_trigger = "$lucario"
+lucario_message = "The bot cannot do Lucario. Lucario is way too sexy."
+
+math_trigger = "$math"
+math_help = "$math expression -- Print the result of a mathematical expression."
+
+metrics_trigger = "$metrics"
+metrics_help = "$metrics -- Print statistics about the bot."
+
+nohomo_trigger = "<3"
+nohomo_message = "#nohomo"
+
+pleurniche_trigger = "$pleurniche"
+
+quotes_trigger_1 = "$quote"
+quotes_trigger_2 = "$quotes"
+quotes_help = "$quotes -- Display a random famous quote from the #SexManiac users."
+
+roll_trigger = "$roll"
+roll_help = "$roll sides -- Rolls a die of the specified amount of sides."
+
+select_trigger = "$select"
+select_help = "$select words -- Selects a random word in a list."
+
+somafm_trigger = "$somafm"
+somafm_help = "$somafm station -- Prints the current track playing on the station."
+
+translate_trigger = "$translate"
+translate_help = "$translate [source-]target text -- Translates text. The source language can be detected automatically."
+
+typist_trigger = "$typist"
+typist_help = "$typist -- Start a game with `$typist start`. Type the sentence without errors before everyone else to win points. Type `typist reset` to end the current game."
+
+ud_trigger = "$ud"
+ud_help = "$ud term -- Searches urban dictionary for the given term."
+
+vote_trigger = "$vote"
+
+weather_trigger = "$weather"
+weather_help = "$weather city -- Shows weather information for the given city."
