@@ -22,7 +22,9 @@ fn load_plugins(config: &Config) -> Plugins {
 
 async fn main_setup() -> irc::error::Result<(Client, Plugins)> {
     let config = Config::load(CONFIG_PATH)?;
-    let plugins = load_plugins(&config);
+    let mut plugins = load_plugins(&config);
+    plugins.push(Box::new(MetricsPlugin::new(&config, &plugins)));
+
     let client = Client::from_config(config).await?;
     client.identify()?;
 
@@ -35,6 +37,7 @@ async fn main_loop(mut client: Client, plugins: Plugins) -> irc::error::Result<(
         let message = stream.select_next_some().await?;
         match message.command {
             Command::PRIVMSG(ref target, ref msg) => {
+                let msg = msg.trim();
                 for plugin in &plugins {
                     if plugin.matches(msg) {
                         plugin.call(&client, target, msg)?;
