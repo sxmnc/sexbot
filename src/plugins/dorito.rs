@@ -16,6 +16,7 @@ impl super::Plugin for DoritoPlugin {
     fn configure(&mut self, config: &Config) {
         self.trigger = get_required!(config, "dorito_trigger");
         self.message = get_required!(config, "dorito_message");
+
         self.false_message = get_required!(config, "dorito_false_message");
         self.true_message = get_required!(config, "dorito_true_message");
         self.troll_message = get_required!(config, "dorito_troll_message");
