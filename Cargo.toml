@@ -11,3 +11,4 @@ futures = "0.3"
 irc = "0.15"
 rand = "0.8"
 tokio = { version = "1.14", features = ["rt", "rt-multi-thread", "macros"] }
+urlencoding = "2.1"
