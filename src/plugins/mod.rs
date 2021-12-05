@@ -7,6 +7,7 @@ pub use lmgtfy::LmgtfyPlugin;
 pub use lucario::LucarioPlugin;
 pub use metrics::MetricsPlugin;
 pub use nohomo::NohomoPlugin;
+pub use pleurniche::PleurnichePlugin;
 pub use reply::ReplyPlugin;
 
 pub mod beke;
@@ -16,6 +17,7 @@ pub mod lmgtfy;
 pub mod lucario;
 pub mod metrics;
 pub mod nohomo;
+pub mod pleurniche;
 pub mod reply;
 
 pub trait Plugin {

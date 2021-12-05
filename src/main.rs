@@ -16,6 +16,7 @@ async fn main() -> irc::error::Result<()> {
     register!(ext, HelpPlugin);
     register!(ext, LmgtfyPlugin);
     register!(ext, LucarioPlugin);
+    register!(ext, PleurnichePlugin);
     register!(ext, NohomoPlugin);
     register!(ext, ReplyPlugin);
 
