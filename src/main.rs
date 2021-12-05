@@ -1,70 +1,45 @@
 use futures::prelude::*;
 use irc::client::prelude::*;
 
-use crate::prelude::*;
+use crate::plugins::*;
 
 static CONFIG_PATH: &str = "config.toml";
 
 mod macros;
 mod plugins;
-mod prelude;
-
-fn load_plugins(config: &Config) -> Plugins {
-    build_plugins! {
-        config,
-        BekePlugin,
-        DoritoPlugin,
-        HelpPlugin,
-        LucarioPlugin,
-        NohomoPlugin,
-        ReplyPlugin,
-    }
-}
-
-async fn main_setup() -> irc::error::Result<(Client, Plugins)> {
-    let config = Config::load(CONFIG_PATH)?;
-    let mut plugins = load_plugins(&config);
-    plugins.push(Box::new(MetricsPlugin::new(&config, &plugins)));
-
-    let client = Client::from_config(config).await?;
-    client.identify()?;
-
-    Ok((client, plugins))
-}
-
-fn extract_prefix(message: &Message) -> String {
-    message
-        .prefix
-        .to_owned()
-        .map(|prefix| match prefix {
-            Prefix::Nickname(prefix, _, _) => prefix,
-            Prefix::ServerName(prefix) => prefix,
-        })
-        .unwrap_or_default()
-}
-
-async fn main_loop(mut client: Client, plugins: Plugins) -> irc::error::Result<()> {
-    let mut stream = client.stream()?;
-    loop {
-        let message = stream.select_next_some().await?;
-        match message.command {
-            Command::PRIVMSG(ref target, ref msg) => {
-                let msg = msg.trim();
-                for plugin in &plugins {
-                    if plugin.matches(msg) {
-                        let prefix = extract_prefix(&message);
-                        plugin.call(&client, target, msg, prefix)?;
-                        break;
-                    }
-                }
-            }
-            _ => (),
-        }
-    }
-}
 
 #[tokio::main]
 async fn main() -> irc::error::Result<()> {
-    let (client, plugins) = main_setup().await?;
-    main_loop(client, plugins).await
+    let mut ext = Plugins::new();
+    register!(ext, BekePlugin);
+    register!(ext, DoritoPlugin);
+    register!(ext, HelpPlugin);
+    register!(ext, LmgtfyPlugin);
+    register!(ext, LucarioPlugin);
+    register!(ext, NohomoPlugin);
+    register!(ext, ReplyPlugin);
+
+    let config = Config::load(CONFIG_PATH)?;
+    for plugin in &mut ext {
+        plugin.configure(&config);
+    }
+
+    let mut metrics_plugin = MetricsPlugin::new();
+    metrics_plugin.configure(&config);
+    metrics_plugin.plugin_count = ext.len() + 1;
+    ext.push(Box::new(metrics_plugin));
+
+    let mut client = Client::from_config(config).await?;
+    client.identify()?;
+
+    let mut stream = client.stream()?;
+    loop {
+        let message = stream.select_next_some().await?;
+        for plugin in &ext {
+            if plugin.matches(&message) {
+                plugin.call(&client, &message)?;
+                break;
+            }
+        }
+    }
 }

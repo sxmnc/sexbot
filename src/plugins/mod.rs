@@ -1,17 +1,33 @@
-pub(crate) use self::beke::BekePlugin;
-pub(crate) use self::dorito::DoritoPlugin;
-pub(crate) use self::help::HelpPlugin;
-pub(crate) use self::lucario::LucarioPlugin;
-pub(crate) use self::metrics::MetricsPlugin;
-pub(crate) use self::nohomo::NohomoPlugin;
-pub(crate) use self::plugin::{Plugin, Plugins};
-pub(crate) use self::reply::ReplyPlugin;
+use irc::client::prelude::*;
 
-mod beke;
-mod dorito;
-mod help;
-mod lucario;
-mod metrics;
-mod nohomo;
-mod plugin;
-mod reply;
+pub use beke::BekePlugin;
+pub use dorito::DoritoPlugin;
+pub use help::HelpPlugin;
+pub use lmgtfy::LmgtfyPlugin;
+pub use lucario::LucarioPlugin;
+pub use metrics::MetricsPlugin;
+pub use nohomo::NohomoPlugin;
+pub use reply::ReplyPlugin;
+
+pub mod beke;
+pub mod dorito;
+pub mod help;
+pub mod lmgtfy;
+pub mod lucario;
+pub mod metrics;
+pub mod nohomo;
+pub mod reply;
+
+pub trait Plugin {
+    fn new() -> Self
+    where
+        Self: Default,
+    {
+        Default::default()
+    }
+    fn configure(&mut self, config: &Config);
+    fn matches(&self, message: &Message) -> bool;
+    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()>;
+}
+
+pub type Plugins = Vec<Box<dyn Plugin>>;

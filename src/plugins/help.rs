@@ -2,8 +2,9 @@ use std::collections::HashMap;
 
 use irc::client::prelude::*;
 
-use crate::prelude::*;
+use crate::macros::*;
 
+#[derive(Default)]
 pub struct HelpPlugin {
     trigger: String,
     topics: HashMap<String, String>,
@@ -19,41 +20,40 @@ fn collect_topics(options: &HashMap<String, String>) -> HashMap<String, String> 
         .collect()
 }
 
-impl HelpPlugin {
-    pub fn new(config: &Config) -> HelpPlugin {
-        HelpPlugin {
-            trigger: get_required!(config, "help_trigger").to_lowercase(),
-            topics: collect_topics(&config.options),
-        }
-    }
-}
-
-impl Plugin for HelpPlugin {
-    fn matches(&self, msg: &str) -> bool {
-        msg.split_whitespace()
-            .next()
-            .map(|handle| handle.to_lowercase() == self.trigger)
-            .unwrap_or_default()
+impl super::Plugin for HelpPlugin {
+    fn configure(&mut self, config: &Config) {
+        self.trigger = get_required!(config, "help_trigger").to_lowercase();
+        self.topics = collect_topics(&config.options);
     }
 
-    fn call(
-        &self,
-        client: &Client,
-        target: &str,
-        msg: &str,
-        _prefix: String,
-    ) -> irc::error::Result<()> {
-        let sender = client.sender();
-        let mut parts = msg.split_whitespace();
-        parts.next();
-
-        let topic = parts.next().unwrap_or("help").to_lowercase();
-
-        if self.topics.contains_key(&topic) {
-            sender.send_privmsg(target, &self.topics[&topic])?;
+    fn matches(&self, message: &Message) -> bool {
+        if let Command::PRIVMSG(ref _target, ref msg) = message.command {
+            msg.split_whitespace()
+                .next()
+                .map(|handle| handle.to_lowercase() == self.trigger)
+                .unwrap_or_default()
         } else {
-            sender.send_privmsg(target, format!("No help available for: {}", topic))?;
+            false
         }
+    }
+
+    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
+        if let Command::PRIVMSG(ref target, ref msg) = message.command {
+            let sender = client.sender();
+            let topic = msg
+                .split_whitespace()
+                .skip(1)
+                .next()
+                .unwrap_or("help")
+                .to_lowercase();
+
+            if self.topics.contains_key(&topic) {
+                sender.send_privmsg(target, &self.topics[&topic])?;
+            } else {
+                sender.send_privmsg(target, format!("No help available for: {}", topic))?;
+            }
+        }
+
         Ok(())
     }
 }

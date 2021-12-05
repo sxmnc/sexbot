@@ -1,35 +1,33 @@
 use irc::client::prelude::*;
 
-use crate::prelude::*;
+use crate::macros::*;
 
+#[derive(Default)]
 pub struct NohomoPlugin {
     trigger: String,
     message: String,
 }
 
-impl NohomoPlugin {
-    pub fn new(config: &Config) -> NohomoPlugin {
-        NohomoPlugin {
-            trigger: get_required!(config, "nohomo_trigger"),
-            message: get_required!(config, "nohomo_message"),
+impl super::Plugin for NohomoPlugin {
+    fn configure(&mut self, config: &Config) {
+        self.trigger = get_required!(config, "nohomo_trigger");
+        self.message = get_required!(config, "nohomo_message");
+    }
+
+    fn matches(&self, message: &Message) -> bool {
+        if let Command::PRIVMSG(ref _target, ref msg) = message.command {
+            msg.contains(&self.trigger)
+        } else {
+            false
         }
     }
-}
 
-impl Plugin for NohomoPlugin {
-    fn matches(&self, msg: &str) -> bool {
-        msg.contains(&self.trigger)
-    }
+    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
+        if let Command::PRIVMSG(ref target, ref _msg) = message.command {
+            let sender = client.sender();
+            sender.send_privmsg(target, &self.message)?;
+        }
 
-    fn call(
-        &self,
-        client: &Client,
-        target: &str,
-        _msg: &str,
-        _prefix: String,
-    ) -> irc::error::Result<()> {
-        let sender = client.sender();
-        sender.send_privmsg(target, &self.message)?;
         Ok(())
     }
 }

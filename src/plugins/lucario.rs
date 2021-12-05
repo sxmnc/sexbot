@@ -1,35 +1,33 @@
 use irc::client::prelude::*;
 
-use crate::prelude::*;
+use crate::macros::*;
 
+#[derive(Default)]
 pub struct LucarioPlugin {
     trigger: String,
     message: String,
 }
 
-impl LucarioPlugin {
-    pub fn new(config: &Config) -> LucarioPlugin {
-        LucarioPlugin {
-            trigger: get_required!(config, "lucario_trigger").to_lowercase(),
-            message: get_required!(config, "lucario_message"),
+impl super::Plugin for LucarioPlugin {
+    fn configure(&mut self, config: &Config) {
+        self.trigger = get_required!(config, "lucario_trigger").to_lowercase();
+        self.message = get_required!(config, "lucario_message");
+    }
+
+    fn matches(&self, message: &Message) -> bool {
+        if let Command::PRIVMSG(ref _target, ref msg) = message.command {
+            msg.trim().to_lowercase() == self.trigger
+        } else {
+            false
         }
     }
-}
 
-impl Plugin for LucarioPlugin {
-    fn matches(&self, msg: &str) -> bool {
-        msg.to_lowercase() == self.trigger
-    }
+    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
+        if let Command::PRIVMSG(ref target, ref _msg) = message.command {
+            let sender = client.sender();
+            sender.send_privmsg(target, &self.message)?;
+        }
 
-    fn call(
-        &self,
-        client: &Client,
-        target: &str,
-        _msg: &str,
-        _prefix: String,
-    ) -> irc::error::Result<()> {
-        let sender = client.sender();
-        sender.send_privmsg(target, &self.message)?;
         Ok(())
     }
 }
