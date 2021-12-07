@@ -1,0 +1,15 @@
+triggers = ["$help"]
+
+[topics]
+hash = "$hash algorithm input -- Hashes text with the given algorithm."
+help = "$help topic -- Prints out help about a bot plugin or command."
+math = "$math expression -- Print the result of a mathematical expression."
+metrics = "$metrics -- Print statistics about the bot."
+quotes = "$quotes -- Display a random famous quote from the #SexManiac users."
+roll = "$roll sides -- Rolls a die of the specified amount of sides."
+select = "$select words -- Selects a random word in a list."
+somafm = "$somafm station -- Prints the current track playing on the station."
+translate = "$translate [source-]target text -- Translates text. The source language can be detected automatically."
+typist = "$typist -- Start a game with `$typist start`. Type the sentence without errors before everyone else to win points. Type `typist reset` to end the current game."
+ud = "$ud term -- Searches urban dictionary for the given term."
+weather = "$weather city -- Shows weather information for the given city."

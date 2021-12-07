@@ -8,6 +8,7 @@ pub use lucario::LucarioPlugin;
 pub use metrics::MetricsPlugin;
 pub use nohomo::NohomoPlugin;
 pub use pleurniche::PleurnichePlugin;
+pub use quotes::QuotesPlugin;
 pub use reply::ReplyPlugin;
 
 pub mod beke;
@@ -18,16 +19,11 @@ pub mod lucario;
 pub mod metrics;
 pub mod nohomo;
 pub mod pleurniche;
+pub mod quotes;
 pub mod reply;
 
 pub trait Plugin {
-    fn new() -> Self
-    where
-        Self: Default,
-    {
-        Default::default()
-    }
-    fn configure(&mut self, config: &Config);
+    fn configure(&mut self, _config: &Config) {}
     fn matches(&self, message: &Message) -> bool;
     fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()>;
 }

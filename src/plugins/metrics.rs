@@ -1,24 +1,35 @@
 use chrono::{DateTime, Utc};
 use irc::client::prelude::*;
+use serde_derive::Deserialize;
 
 use crate::macros::*;
 
-#[derive(Default)]
+#[derive(Deserialize)]
 pub struct MetricsPlugin {
+    #[serde(skip_deserializing)]
     start_time: Option<DateTime<Utc>>,
-    pub plugin_count: usize,
-    trigger: String,
+    plugin_count: Option<usize>,
+    triggers: Vec<String>,
+}
+
+impl MetricsPlugin {
+    pub fn new() -> MetricsPlugin {
+        from_config!("priv/config/metrics.toml")
+    }
+
+    pub fn set_plugin_count(&mut self, plugin_count: usize) {
+        self.plugin_count = Some(plugin_count);
+    }
 }
 
 impl super::Plugin for MetricsPlugin {
-    fn configure(&mut self, config: &Config) {
+    fn configure(&mut self, _config: &Config) {
         self.start_time = Some(Utc::now());
-        self.trigger = get_required!(config, "metrics_trigger").to_lowercase();
     }
 
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
-            msg.trim().to_lowercase() == self.trigger
+            self.triggers.contains(&msg.trim().to_lowercase())
         } else {
             false
         }
@@ -40,7 +51,11 @@ impl super::Plugin for MetricsPlugin {
                 target,
                 format!(
                     "{} plugins loaded; up {} days, {} hours, {} minutes, {} seconds",
-                    self.plugin_count, days, hours, minutes, seconds,
+                    self.plugin_count.unwrap(),
+                    days,
+                    hours,
+                    minutes,
+                    seconds,
                 ),
             )?;
         }

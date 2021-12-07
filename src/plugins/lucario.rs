@@ -1,22 +1,24 @@
 use irc::client::prelude::*;
+use serde_derive::Deserialize;
 
 use crate::macros::*;
 
-#[derive(Default)]
+#[derive(Deserialize)]
 pub struct LucarioPlugin {
-    trigger: String,
+    triggers: Vec<String>,
     message: String,
 }
 
-impl super::Plugin for LucarioPlugin {
-    fn configure(&mut self, config: &Config) {
-        self.trigger = get_required!(config, "lucario_trigger").to_lowercase();
-        self.message = get_required!(config, "lucario_message");
+impl LucarioPlugin {
+    pub fn new() -> LucarioPlugin {
+        from_config!("priv/config/lucario.toml")
     }
+}
 
+impl super::Plugin for LucarioPlugin {
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
-            msg.trim().to_lowercase() == self.trigger
+            self.triggers.contains(&msg.trim().to_lowercase())
         } else {
             false
         }

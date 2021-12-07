@@ -1,0 +1,4 @@
+nickname = "sexbot"
+server = "irc.libera.chat"
+password = "*******"
+channels = ["#SexManiac-spam"]

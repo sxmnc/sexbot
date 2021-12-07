@@ -1,30 +1,20 @@
-use std::collections::HashMap;
-
 use irc::client::prelude::*;
+use serde_derive::Deserialize;
 
-#[derive(Default)]
+use crate::macros::*;
+
+#[derive(Deserialize)]
 pub struct LmgtfyPlugin {
     triggers: Vec<String>,
 }
 
-fn collect_triggers(options: &HashMap<String, String>) -> Vec<String> {
-    options
-        .iter()
-        .filter_map(|(k, v)| {
-            if k.starts_with("lmgtfy_trigger_") {
-                Some(v.to_owned())
-            } else {
-                None
-            }
-        })
-        .collect()
+impl LmgtfyPlugin {
+    pub fn new() -> LmgtfyPlugin {
+        from_config!("priv/config/lmgtfy.toml")
+    }
 }
 
 impl super::Plugin for LmgtfyPlugin {
-    fn configure(&mut self, config: &Config) {
-        self.triggers = collect_triggers(&config.options);
-    }
-
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
             msg.split_whitespace()

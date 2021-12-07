@@ -1,18 +1,27 @@
 use irc::client::prelude::*;
 
-#[derive(Default)]
 pub struct ReplyPlugin {
-    nickname: String,
+    nickname: Option<String>,
+}
+
+impl ReplyPlugin {
+    pub fn new() -> ReplyPlugin {
+        ReplyPlugin { nickname: None }
+    }
 }
 
 impl super::Plugin for ReplyPlugin {
     fn configure(&mut self, config: &Config) {
-        self.nickname = config.nickname().unwrap().to_lowercase();
+        self.nickname = Some(config.nickname().unwrap().to_lowercase());
     }
 
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
-            match msg.trim().to_lowercase().strip_prefix(&self.nickname) {
+            match msg
+                .trim()
+                .to_lowercase()
+                .strip_prefix(self.nickname.as_ref().unwrap())
+            {
                 Some(":" | "," | "") => true,
                 _ => false,
             }
@@ -27,7 +36,7 @@ impl super::Plugin for ReplyPlugin {
             let source_nickname = message.source_nickname();
 
             let msg_owned = msg.trim().to_lowercase();
-            let message_tail = msg_owned.strip_prefix(&self.nickname);
+            let message_tail = msg_owned.strip_prefix(self.nickname.as_ref().unwrap());
 
             if let (Some(nickname), Some(tail @ (":" | "," | ""))) = (source_nickname, message_tail)
             {

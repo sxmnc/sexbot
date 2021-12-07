@@ -1,30 +1,28 @@
 use irc::client::prelude::*;
 use rand::Rng;
+use serde_derive::Deserialize;
 
 use crate::macros::*;
 
-#[derive(Default)]
+#[derive(Deserialize)]
 pub struct DoritoPlugin {
-    trigger: String,
+    triggers: Vec<String>,
     message: String,
     false_message: String,
     true_message: String,
     troll_message: String,
 }
 
-impl super::Plugin for DoritoPlugin {
-    fn configure(&mut self, config: &Config) {
-        self.trigger = get_required!(config, "dorito_trigger");
-        self.message = get_required!(config, "dorito_message");
-
-        self.false_message = get_required!(config, "dorito_false_message");
-        self.true_message = get_required!(config, "dorito_true_message");
-        self.troll_message = get_required!(config, "dorito_troll_message");
+impl DoritoPlugin {
+    pub fn new() -> DoritoPlugin {
+        from_config!("priv/config/dorito.toml")
     }
+}
 
+impl super::Plugin for DoritoPlugin {
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
-            msg.trim() == self.trigger
+            self.triggers.contains(&msg.trim().to_lowercase())
         } else {
             false
         }

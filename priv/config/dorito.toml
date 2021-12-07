@@ -1,0 +1,5 @@
+triggers = [":^)"]
+message = "THE TROLL STRUCK AGAIN"
+false_message = "False story"
+true_message = "True story"
+troll_message = "TROLOLO"

@@ -1,15 +1,22 @@
 #[macro_export]
-macro_rules! get_required {
-    ($config:ident, $key:literal) => {
-        $config.get_option($key).unwrap().to_owned()
-    };
+macro_rules! from_config {
+    ($path:literal) => {{
+        let data = std::fs::read_to_string($path).unwrap_or_else(|_| panic!("{} not found", $path));
+        toml::from_str(&data).unwrap()
+    }};
 }
 
 #[macro_export]
-macro_rules! register {
-    ($ext:ident, $plugin:ident) => {
-        $ext.push(Box::new($plugin::new()))
+macro_rules! register_plugins {
+    ($($plugin:ident),+ $(,)?) => {
+        {
+            let mut ext = crate::plugins::Plugins::new();
+            $(
+                ext.push(Box::new($plugin::new()));
+            )+
+            ext
+        }
     };
 }
 
-pub use get_required;
+pub use from_config;

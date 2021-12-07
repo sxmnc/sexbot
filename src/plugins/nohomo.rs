@@ -1,22 +1,24 @@
 use irc::client::prelude::*;
+use serde_derive::Deserialize;
 
 use crate::macros::*;
 
-#[derive(Default)]
+#[derive(Deserialize)]
 pub struct NohomoPlugin {
-    trigger: String,
+    triggers: Vec<String>,
     message: String,
 }
 
-impl super::Plugin for NohomoPlugin {
-    fn configure(&mut self, config: &Config) {
-        self.trigger = get_required!(config, "nohomo_trigger");
-        self.message = get_required!(config, "nohomo_message");
+impl NohomoPlugin {
+    pub fn new() -> NohomoPlugin {
+        from_config!("priv/config/nohomo.toml")
     }
+}
 
+impl super::Plugin for NohomoPlugin {
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
-            msg.contains(&self.trigger)
+            self.triggers.iter().any(|trigger| msg.contains(trigger))
         } else {
             false
         }

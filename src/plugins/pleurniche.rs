@@ -1,22 +1,25 @@
 use irc::client::prelude::*;
+use serde_derive::Deserialize;
 
 use crate::macros::*;
 
-#[derive(Default)]
+#[derive(Deserialize)]
 pub struct PleurnichePlugin {
-    trigger: String,
+    triggers: Vec<String>,
+}
+
+impl PleurnichePlugin {
+    pub fn new() -> PleurnichePlugin {
+        from_config!("priv/config/pleurniche.toml")
+    }
 }
 
 impl super::Plugin for PleurnichePlugin {
-    fn configure(&mut self, config: &Config) {
-        self.trigger = get_required!(config, "pleurniche_trigger").to_lowercase();
-    }
-
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
             msg.split_whitespace()
                 .next()
-                .map(|handle| handle.to_lowercase() == self.trigger)
+                .map(|handle| self.triggers.contains(&handle.to_lowercase()))
                 .unwrap_or_default()
         } else {
             false

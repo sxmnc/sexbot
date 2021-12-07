@@ -1,36 +1,28 @@
 use std::collections::HashMap;
 
 use irc::client::prelude::*;
+use serde_derive::Deserialize;
 
 use crate::macros::*;
 
-#[derive(Default)]
+#[derive(Deserialize)]
 pub struct HelpPlugin {
-    trigger: String,
+    triggers: Vec<String>,
     topics: HashMap<String, String>,
 }
 
-fn collect_topics(options: &HashMap<String, String>) -> HashMap<String, String> {
-    options
-        .iter()
-        .filter_map(|(k, v)| match k.strip_suffix("_help") {
-            Some(k) => Some((k.to_owned(), v.to_owned())),
-            None => None,
-        })
-        .collect()
+impl HelpPlugin {
+    pub fn new() -> HelpPlugin {
+        from_config!("priv/config/help.toml")
+    }
 }
 
 impl super::Plugin for HelpPlugin {
-    fn configure(&mut self, config: &Config) {
-        self.trigger = get_required!(config, "help_trigger").to_lowercase();
-        self.topics = collect_topics(&config.options);
-    }
-
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
             msg.split_whitespace()
                 .next()
-                .map(|handle| handle.to_lowercase() == self.trigger)
+                .map(|handle| self.triggers.contains(&handle.to_lowercase()))
                 .unwrap_or_default()
         } else {
             false
