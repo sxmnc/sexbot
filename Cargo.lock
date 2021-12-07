@@ -677,7 +677,10 @@ dependencies = [
  "futures",
  "irc",
  "rand",
+ "serde",
+ "serde_derive",
  "tokio",
+ "toml",
  "urlencoding",
 ]
 
