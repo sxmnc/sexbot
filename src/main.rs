@@ -3,7 +3,7 @@ use irc::client::prelude::*;
 
 use crate::plugins::*;
 
-static CONFIG_PATH: &str = "config.toml";
+static CONFIG_PATH: &str = "config/client_config.toml";
 
 mod macros;
 mod plugins;
@@ -16,6 +16,7 @@ async fn main() -> irc::error::Result<()> {
         HelpPlugin,
         LmgtfyPlugin,
         LucarioPlugin,
+        MathPlugin,
         PleurnichePlugin,
         QuotesPlugin,
         NohomoPlugin,
