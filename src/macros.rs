@@ -1,7 +1,8 @@
 #[macro_export]
 macro_rules! from_config {
     ($path:literal) => {{
-        let data = std::fs::read_to_string($path).unwrap_or_else(|_| panic!("{} not found", $path));
+        let data =
+            std::fs::read_to_string($path).unwrap_or_else(|_| panic!("\"{}\" not found", $path));
         toml::from_str(&data).unwrap()
     }};
 }
