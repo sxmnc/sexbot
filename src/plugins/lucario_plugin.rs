@@ -4,21 +4,21 @@ use serde_derive::Deserialize;
 use crate::macros::*;
 
 #[derive(Deserialize)]
-pub struct NohomoPlugin {
-    triggers: Vec<String>,
-    message: String,
+pub struct LucarioPlugin {
+    pub triggers: Vec<String>,
+    pub message: String,
 }
 
-impl NohomoPlugin {
-    pub fn new() -> NohomoPlugin {
-        from_config!("priv/config/nohomo.toml")
+impl LucarioPlugin {
+    pub fn new() -> LucarioPlugin {
+        from_config!("config/plugins/lucario_config.toml")
     }
 }
 
-impl super::Plugin for NohomoPlugin {
+impl super::Plugin for LucarioPlugin {
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
-            self.triggers.iter().any(|trigger| msg.contains(trigger))
+            self.triggers.contains(&msg.trim().to_lowercase())
         } else {
             false
         }
@@ -26,8 +26,7 @@ impl super::Plugin for NohomoPlugin {
 
     fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref _msg) = message.command {
-            let sender = client.sender();
-            sender.send_privmsg(target, &self.message)?;
+            client.send_privmsg(target, &self.message)?;
         }
 
         Ok(())

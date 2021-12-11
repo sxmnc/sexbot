@@ -13,7 +13,7 @@ pub struct BekePlugin {
 
 impl BekePlugin {
     pub fn new() -> BekePlugin {
-        from_config!("priv/config/beke.toml")
+        from_config!("config/plugins/beke_config.toml")
     }
 }
 
@@ -32,10 +32,9 @@ impl super::Plugin for BekePlugin {
 
     fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref _msg) = message.command {
-            let sender = client.sender();
-            sender.send(Command::NICK(self.temp_nickname.to_owned()))?;
-            sender.send_privmsg(target, &self.message)?;
-            sender.send(Command::NICK(self.nickname.as_ref().unwrap().to_owned()))?;
+            client.send(Command::NICK(self.temp_nickname.to_owned()))?;
+            client.send_privmsg(target, &self.message)?;
+            client.send(Command::NICK(self.nickname.as_ref().unwrap().to_owned()))?;
         }
 
         Ok(())

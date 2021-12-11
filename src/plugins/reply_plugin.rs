@@ -17,11 +17,9 @@ impl super::Plugin for ReplyPlugin {
 
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
-            match msg
-                .trim()
-                .to_lowercase()
-                .strip_prefix(self.nickname.as_ref().unwrap())
-            {
+            let nick = self.nickname.as_ref().unwrap();
+
+            match msg.trim().to_lowercase().strip_prefix(nick) {
                 Some(":" | "," | "") => true,
                 _ => false,
             }
@@ -32,15 +30,13 @@ impl super::Plugin for ReplyPlugin {
 
     fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref msg) = message.command {
-            let sender = client.sender();
             let source_nickname = message.source_nickname();
-
             let msg_owned = msg.trim().to_lowercase();
             let message_tail = msg_owned.strip_prefix(self.nickname.as_ref().unwrap());
 
             if let (Some(nickname), Some(tail @ (":" | "," | ""))) = (source_nickname, message_tail)
             {
-                sender.send_privmsg(target, nickname.to_owned() + tail)?;
+                client.send_privmsg(target, nickname.to_owned() + tail)?;
             }
         }
 

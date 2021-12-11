@@ -14,7 +14,7 @@ pub struct MetricsPlugin {
 
 impl MetricsPlugin {
     pub fn new() -> MetricsPlugin {
-        from_config!("priv/config/metrics.toml")
+        from_config!("config/plugins/metrics_config.toml")
     }
 
     pub fn set_plugin_count(&mut self, plugin_count: usize) {
@@ -37,8 +37,7 @@ impl super::Plugin for MetricsPlugin {
 
     fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref _msg) = message.command {
-            let sender = client.sender();
-
+            let plugin_count = self.plugin_count.unwrap();
             let uptime = Utc::now() - self.start_time.unwrap();
             let num_seconds = uptime.num_seconds();
 
@@ -47,15 +46,11 @@ impl super::Plugin for MetricsPlugin {
             let hours = num_seconds / 60 / 60 % 24;
             let days = num_seconds / 60 / 60 / 24;
 
-            sender.send_privmsg(
+            client.send_privmsg(
                 target,
                 format!(
                     "{} plugins loaded; up {} days, {} hours, {} minutes, {} seconds",
-                    self.plugin_count.unwrap(),
-                    days,
-                    hours,
-                    minutes,
-                    seconds,
+                    plugin_count, days, hours, minutes, seconds,
                 ),
             )?;
         }

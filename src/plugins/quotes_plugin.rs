@@ -1,20 +1,24 @@
+use std::collections::HashMap;
+
 use irc::client::prelude::*;
+use rand::Rng;
 use serde_derive::Deserialize;
 
 use crate::macros::*;
 
 #[derive(Deserialize)]
-pub struct LmgtfyPlugin {
+pub struct QuotesPlugin {
     triggers: Vec<String>,
+    quotes: HashMap<String, String>,
 }
 
-impl LmgtfyPlugin {
-    pub fn new() -> LmgtfyPlugin {
-        from_config!("priv/config/lmgtfy.toml")
+impl QuotesPlugin {
+    pub fn new() -> QuotesPlugin {
+        from_config!("config/plugins/quotes_config.toml")
     }
 }
 
-impl super::Plugin for LmgtfyPlugin {
+impl super::Plugin for QuotesPlugin {
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
             msg.split_whitespace()
@@ -28,7 +32,6 @@ impl super::Plugin for LmgtfyPlugin {
 
     fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref msg) = message.command {
-            let sender = client.sender();
             let topic = msg
                 .split_whitespace()
                 .skip(1)
@@ -36,8 +39,16 @@ impl super::Plugin for LmgtfyPlugin {
                 .join(" ");
 
             if topic.len() > 0 {
-                let topic = urlencoding::encode(&topic);
-                sender.send_privmsg(target, format!("http://lmgtfy.com/?q={}", topic))?;
+                if self.quotes.contains_key(&topic) {
+                    client.send_privmsg(target, &self.quotes[&topic])?;
+                } else {
+                    client.send_privmsg(target, format!("No quote tagged \"{}\"", topic))?;
+                }
+            } else {
+                let mut rng = rand::thread_rng();
+                let keys = self.quotes.keys().collect::<Vec<&String>>();
+                let topic = keys[rng.gen_range(0..keys.len())];
+                client.send_privmsg(target, &self.quotes[topic])?;
             }
         }
 

@@ -15,7 +15,7 @@ pub struct DoritoPlugin {
 
 impl DoritoPlugin {
     pub fn new() -> DoritoPlugin {
-        from_config!("priv/config/dorito.toml")
+        from_config!("config/plugins/dorito_config.toml")
     }
 }
 
@@ -30,21 +30,20 @@ impl super::Plugin for DoritoPlugin {
 
     fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref _msg) = message.command {
-            let sender = client.sender();
-            sender.send_privmsg(target, &self.message)?;
+            client.send_privmsg(target, &self.message)?;
 
             let mut rng = rand::thread_rng();
 
             if rng.gen_range(0..=1) == 0 {
                 if rng.gen_range(0..=4) == 0 {
-                    sender.send_privmsg(target, &self.false_message)?;
+                    client.send_privmsg(target, &self.false_message)?;
                 } else {
-                    sender.send_privmsg(target, &self.true_message)?;
+                    client.send_privmsg(target, &self.true_message)?;
                 }
             }
 
             if rng.gen_range(0..=1) == 0 {
-                sender.send_privmsg(target, &self.troll_message)?;
+                client.send_privmsg(target, &self.troll_message)?;
             }
         }
 

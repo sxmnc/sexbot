@@ -13,7 +13,7 @@ pub struct HelpPlugin {
 
 impl HelpPlugin {
     pub fn new() -> HelpPlugin {
-        from_config!("priv/config/help.toml")
+        from_config!("config/plugins/help_config.toml")
     }
 }
 
@@ -31,7 +31,6 @@ impl super::Plugin for HelpPlugin {
 
     fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref msg) = message.command {
-            let sender = client.sender();
             let topic = msg
                 .split_whitespace()
                 .skip(1)
@@ -40,9 +39,9 @@ impl super::Plugin for HelpPlugin {
                 .to_lowercase();
 
             if self.topics.contains_key(&topic) {
-                sender.send_privmsg(target, &self.topics[&topic])?;
+                client.send_privmsg(target, &self.topics[&topic])?;
             } else {
-                sender.send_privmsg(target, format!("No help available for: {}", topic))?;
+                client.send_privmsg(target, format!("No help available for: {}", topic))?;
             }
         }
 

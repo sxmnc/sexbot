@@ -4,17 +4,17 @@ use serde_derive::Deserialize;
 use crate::macros::*;
 
 #[derive(Deserialize)]
-pub struct PleurnichePlugin {
+pub struct MathPlugin {
     triggers: Vec<String>,
 }
 
-impl PleurnichePlugin {
-    pub fn new() -> PleurnichePlugin {
-        from_config!("priv/config/pleurniche.toml")
+impl MathPlugin {
+    pub fn new() -> MathPlugin {
+        from_config!("config/plugins/math_config.toml")
     }
 }
 
-impl super::Plugin for PleurnichePlugin {
+impl super::Plugin for MathPlugin {
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
             msg.split_whitespace()
@@ -28,21 +28,17 @@ impl super::Plugin for PleurnichePlugin {
 
     fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref msg) = message.command {
-            let sender = client.sender();
-            let topic = msg
+            let expression = msg
                 .split_whitespace()
                 .skip(1)
                 .collect::<Vec<&str>>()
                 .join(" ");
 
-            if topic.len() > 0 {
-                sender.send_privmsg(
-                    target,
-                    format!(
-                        "arrêtez de dire que {} !!!!!!! =(=(=(=(=(=(=(=(=(=(=(=(=(=(=(=(=(=(=(=(=(",
-                        topic
-                    ),
-                )?;
+            if expression.len() > 0 {
+                match meval::eval_str(expression) {
+                    Ok(result) => client.send_privmsg(target, format!("result: {}", result))?,
+                    Err(error) => client.send_privmsg(target, error)?,
+                }
             }
         }
 
