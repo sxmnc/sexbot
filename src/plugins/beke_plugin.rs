@@ -17,6 +17,7 @@ impl BekePlugin {
     }
 }
 
+#[async_trait]
 impl super::Plugin for BekePlugin {
     fn configure(&mut self, config: &Config) {
         self.nickname = Some(config.nickname().unwrap().to_owned());
@@ -30,7 +31,7 @@ impl super::Plugin for BekePlugin {
         }
     }
 
-    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
+    async fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref _msg) = message.command {
             client.send(Command::NICK(self.temp_nickname.to_owned()))?;
             client.send_privmsg(target, &self.message)?;

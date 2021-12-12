@@ -22,6 +22,7 @@ impl MetricsPlugin {
     }
 }
 
+#[async_trait]
 impl super::Plugin for MetricsPlugin {
     fn configure(&mut self, _config: &Config) {
         self.start_time = Some(Utc::now());
@@ -35,7 +36,7 @@ impl super::Plugin for MetricsPlugin {
         }
     }
 
-    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
+    async fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref _msg) = message.command {
             let plugin_count = self.plugin_count.unwrap();
             let uptime = Utc::now() - self.start_time.unwrap();

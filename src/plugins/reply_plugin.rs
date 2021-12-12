@@ -10,6 +10,7 @@ impl ReplyPlugin {
     }
 }
 
+#[async_trait]
 impl super::Plugin for ReplyPlugin {
     fn configure(&mut self, config: &Config) {
         self.nickname = Some(config.nickname().unwrap().to_lowercase());
@@ -28,7 +29,7 @@ impl super::Plugin for ReplyPlugin {
         }
     }
 
-    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
+    async fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref msg) = message.command {
             let source_nickname = message.source_nickname();
             let msg_owned = msg.trim().to_lowercase();

@@ -14,6 +14,7 @@ impl MathPlugin {
     }
 }
 
+#[async_trait]
 impl super::Plugin for MathPlugin {
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
@@ -26,7 +27,7 @@ impl super::Plugin for MathPlugin {
         }
     }
 
-    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
+    async fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref msg) = message.command {
             let expression = msg
                 .split_whitespace()

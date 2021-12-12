@@ -30,10 +30,11 @@ pub mod quotes_plugin;
 pub mod reply_plugin;
 pub mod roll_plugin;
 
+#[async_trait]
 pub trait Plugin {
     fn configure(&mut self, _config: &Config) {}
     fn matches(&self, message: &Message) -> bool;
-    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()>;
+    async fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()>;
 }
 
 pub type Plugins = Vec<Box<dyn Plugin>>;

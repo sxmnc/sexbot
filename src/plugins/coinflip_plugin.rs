@@ -17,6 +17,7 @@ impl CoinflipPlugin {
     }
 }
 
+#[async_trait]
 impl super::Plugin for CoinflipPlugin {
     fn matches(&self, message: &Message) -> bool {
         if let Command::PRIVMSG(ref _target, ref msg) = message.command {
@@ -26,7 +27,7 @@ impl super::Plugin for CoinflipPlugin {
         }
     }
 
-    fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
+    async fn call(&self, client: &Client, message: &Message) -> irc::error::Result<()> {
         if let Command::PRIVMSG(ref target, ref _msg) = message.command {
             let mut rng = rand::thread_rng();
 
