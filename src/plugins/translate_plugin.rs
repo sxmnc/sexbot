@@ -1,7 +1,5 @@
 use irc::client::prelude::*;
 use serde::Deserialize;
-//use regex::Regex;
-//use scraper::{Html, Selector};
 
 use crate::macros::*;
 
