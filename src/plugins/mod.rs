@@ -15,6 +15,7 @@ pub use quotes_plugin::QuotesPlugin;
 pub use reply_plugin::ReplyPlugin;
 pub use roll_plugin::RollPlugin;
 pub use translate_plugin::TranslatePlugin;
+pub use ud_plugin::UdPlugin;
 
 pub mod beke_plugin;
 pub mod coinflip_plugin;
@@ -31,6 +32,7 @@ pub mod quotes_plugin;
 pub mod reply_plugin;
 pub mod roll_plugin;
 pub mod translate_plugin;
+pub mod ud_plugin;
 
 #[async_trait]
 pub trait Plugin {

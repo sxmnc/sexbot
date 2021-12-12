@@ -25,6 +25,7 @@ async fn main() -> irc::error::Result<()> {
         QuotesPlugin,
         RollPlugin,
         TranslatePlugin,
+        UdPlugin,
         LinkPlugin,
         NohomoPlugin,
         ReplyPlugin,
