@@ -12,6 +12,7 @@ mod plugins;
 async fn main() -> irc::error::Result<()> {
     let mut ext = register_plugins! {
         BekePlugin,
+        CoinflipPlugin,
         DoritoPlugin,
         HelpPlugin,
         LmgtfyPlugin,
@@ -19,8 +20,10 @@ async fn main() -> irc::error::Result<()> {
         MathPlugin,
         PleurnichePlugin,
         QuotesPlugin,
+        RollPlugin,
         NohomoPlugin,
         ReplyPlugin,
+        LinkPlugin,
     };
 
     let mut metrics = MetricsPlugin::new();

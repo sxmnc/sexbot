@@ -1,8 +1,10 @@
 use irc::client::prelude::*;
 
 pub use beke_plugin::BekePlugin;
+pub use coinflip_plugin::CoinflipPlugin;
 pub use dorito_plugin::DoritoPlugin;
 pub use help_plugin::HelpPlugin;
+pub use link_plugin::LinkPlugin;
 pub use lmgtfy_plugin::LmgtfyPlugin;
 pub use lucario_plugin::LucarioPlugin;
 pub use math_plugin::MathPlugin;
@@ -11,10 +13,13 @@ pub use nohomo_plugin::NohomoPlugin;
 pub use pleurniche_plugin::PleurnichePlugin;
 pub use quotes_plugin::QuotesPlugin;
 pub use reply_plugin::ReplyPlugin;
+pub use roll_plugin::RollPlugin;
 
 pub mod beke_plugin;
+pub mod coinflip_plugin;
 pub mod dorito_plugin;
 pub mod help_plugin;
+pub mod link_plugin;
 pub mod lmgtfy_plugin;
 pub mod lucario_plugin;
 pub mod math_plugin;
@@ -23,6 +28,7 @@ pub mod nohomo_plugin;
 pub mod pleurniche_plugin;
 pub mod quotes_plugin;
 pub mod reply_plugin;
+pub mod roll_plugin;
 
 pub trait Plugin {
     fn configure(&mut self, _config: &Config) {}

@@ -1,0 +1,3 @@
+triggers = ["$coinflip"]
+heads_message = "You got Heads!"
+tails_message = "You got Tails!"
