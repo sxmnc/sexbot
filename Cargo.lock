@@ -1419,6 +1419,7 @@ dependencies = [
  "scraper",
  "serde",
  "serde_derive",
+ "serde_json",
  "tokio",
  "toml",
  "urlencoding",
