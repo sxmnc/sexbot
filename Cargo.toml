@@ -6,11 +6,16 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+async-trait = "0.1"
 chrono = "0.4"
+d20 = "0.1"
 futures = "0.3"
 irc = "0.15"
 meval = "0.2"
 rand = "0.8"
+regex = "1.5"
+reqwest = "0.11"
+scraper = "0.12"
 serde = "1.0"
 serde_derive = "1.0"
 tokio = { version = "1.14", features = ["rt", "rt-multi-thread", "macros"] }
