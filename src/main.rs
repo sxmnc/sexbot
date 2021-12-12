@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate async_trait;
+
 use futures::prelude::*;
 use irc::client::prelude::*;
 
@@ -43,7 +46,7 @@ async fn main() -> irc::error::Result<()> {
         let message = stream.select_next_some().await?;
         for plugin in &ext {
             if plugin.matches(&message) {
-                plugin.call(&client, &message)?;
+                plugin.call(&client, &message).await?;
                 break;
             }
         }
