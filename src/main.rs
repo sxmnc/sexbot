@@ -24,9 +24,10 @@ async fn main() -> irc::error::Result<()> {
         PleurnichePlugin,
         QuotesPlugin,
         RollPlugin,
+        TranslatePlugin,
+        LinkPlugin,
         NohomoPlugin,
         ReplyPlugin,
-        LinkPlugin,
     };
 
     let mut metrics = MetricsPlugin::new();

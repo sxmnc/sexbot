@@ -1,0 +1,2 @@
+triggers = ["$translate"]
+yandex_api_key = "*******"

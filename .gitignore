@@ -1,2 +1,3 @@
 /target
 config/client_config.toml
+config/plugins/translate_config.toml
