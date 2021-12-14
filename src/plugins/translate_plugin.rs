@@ -51,9 +51,9 @@ impl super::Plugin for TranslatePlugin {
                                 .send_privmsg(target, format!("Translation result: {}", text))?,
                             None => {}
                         },
-                        _ => {}
+                        Err(error) => println!("{}", error),
                     },
-                    _ => {}
+                    Err(error) => println!("{}", error),
                 }
             }
         }
